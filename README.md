@@ -1,16 +1,16 @@
 # AIRFLOW_MLFLOW_DOCKER
-![test](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*mkgdO8TWSj46j2m1JUzmvg.png)
+![test](docs/env.png)
 
 
 ## Table of content
-- [Background](#background)
-- [Tools Overview](#tools_overview)
-- [Getting started](#getting_started)
-    * [Docker Compose configuration](#docker_config)
-    * [Airflow](#airflow)
-    * [PostgreSQL](#PostgreSQL)
-- [Future improvements](#future-improvements)
-- [References](#references)
+- **[Background]**(#background)
+- **[Tools Overview]**(#tools_overview)
+- **[Getting started]**(#getting_started)
+    * **[Docker Compose configuration]**(#docker_config)
+    * **[Airflow]**(#airflow)
+    * **[PostgreSQL]**(#PostgreSQL)
+- **[Future improvements]**(#future-improvements)
+- **[References]**(#references)
 
 
 
@@ -55,7 +55,7 @@ docker compose up -d
 ### Airflow
 In order to access to `Airflow server` visit the page: `localhost:8080`
 
-![img](docs/imgs/airflow_home.png)
+![img](docs/airflow_homepage.png)
 
 And take a step into `Airflow` world!
 
@@ -92,7 +92,7 @@ order by 2 desc
 ; -- to extract which are the region with the highest temperature at noon
 ```
 here the results:
-![alt text](image.png)
+![alt text](docs/query_screenshot.png.png)
 
 
 ## Future improvements
