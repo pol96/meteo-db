@@ -92,7 +92,7 @@ order by 2 desc
 ; -- to extract which are the region with the highest temperature at noon
 ```
 here the results:
-![alt text](docs/query_screenshot.png.png)
+![alt text](docs/query_screenshot.png)
 
 
 ## Future improvements
