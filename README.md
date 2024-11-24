@@ -53,6 +53,7 @@ docker compose up -d
 
 
 ### Airflow
+
 In order to access to `Airflow server` visit the page: `localhost:8080`
 
 ![img](docs/airflow_homepage.png)
@@ -73,9 +74,21 @@ This repo already contains a structured dag (ETL_METEO.py) with the purpose of l
             └── [...]
 ```
 
+Once you are connected, simply activate and run the ETL_METEO dag (the only one you'll see on the homepage), it will take about 5 minutes to complete the ETL end-to-end
 
 ### PostgreSQL
-You can establish the connection to the pg instance through any IDE (e.g. DBVisualizer, download [here](https://www.dbvis.com/download/)). Once the connection is extablished, you can navigate the schemas and look for results
+
+The instance created is running on the localhost and has been whitelisted in the docker container. 
+You can establish the connection to the pg instance through any IDE (e.g. DBVisualizer, download [here](https://www.dbvis.com/download/)). Once the connection is established, you can navigate the schemas and look for results.
+The (critical) target table is `fct_meteo`, which stores all the needed info.
+
+Connection: 
+- host: localhost
+- port: 5433
+- database: meteo
+- user: meteo
+- password: meteo
+
 
 Here a simple query on the target table:
 
@@ -92,7 +105,8 @@ order by 2 desc
 ; -- to extract which are the region with the highest temperature at noon
 ```
 here the results:
-![alt text](docs/query_screenshot.png)
+
+![test](docs/query_screenshot.png)
 
 
 ## Future improvements

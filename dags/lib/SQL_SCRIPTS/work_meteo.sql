@@ -1,3 +1,15 @@
+/*
+
+  postgis extension to be added. this will enable the GIS functions available on PostgreSQL.
+  Tables to create:
+
+    - WORK_METEO: for loading the cleaned data coming from the sources. 2 main purposes:
+      - defines the structure of the final table
+      - deduplicate the records base on the surrogate key (observation_pk)
+
+    - WORK_MISSING: for inputing low-frequency missing cases for region and provinces. leveraging GIS functions it defines per each unreconciliated city which is its province and region  
+
+*/
 CREATE EXTENSION postgis;
 
 create table if not exists WORK_METEO (

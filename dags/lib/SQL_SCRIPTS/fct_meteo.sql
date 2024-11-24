@@ -1,3 +1,10 @@
+/*
+
+    FCT_METEO, the final table containing all the reconciliated data from sources. 
+    The pipeline looks for the primary key (observation_pk, a surrogate key based on city and timestamp); in case of concurrency it updates the update_timestamp technical field
+    the purpose of this is to make idempotent the pipeline for multiple runs 
+
+*/
 create table if not exists FCT_METEO (
       OBSERVATION_PK text not null primary key
     , REGION text
