@@ -100,10 +100,10 @@ here the results:
 this repo is a simple showcase of how docker can combine together a scheduler such as airflow with a PG instance. It is not recommandable to use this environment in production, but for local testing.
 
 in case of productionalization:
-    - **File Storage**: the files should be stored into a cloud storage system such as Google Cloud Storage
-    - **PostgreSQL Instance**: PG should be deplpoyed directly into a cloud engine for scalability and reliability
-    - **Airflow Instance**: Airflow can be instanciated through cloud services such as Google Composer, to take advantage also of the Kubernetes Clusters onto which airflow itself is deployed
-    - **Access Policy**: IAM and access management must be coherently assigned by administators, through service account and following the minimum privilege principle 
+- **File Storage**: the files should be stored into a cloud storage system such as Google Cloud Storage
+- **PostgreSQL Instance**: PG should be deplpoyed directly into a cloud engine for scalability and reliability
+- **Airflow Instance**: Airflow can be instanciated through cloud services such as Google Composer, to take advantage also of the Kubernetes Clusters onto which airflow itself is deployed
+- **Access Policy**: IAM and access management must be coherently assigned by administators, through service account and following the minimum privilege principle 
 
 ## References
 * [Airflow Docker](https://airflow.apache.org/docs/apache-airflow/2.0.1/start/docker.html)
