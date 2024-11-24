@@ -1,3 +1,5 @@
+CREATE EXTENSION postgis;
+
 create table if not exists WORK_METEO (
       OBSERVATION_PK text not null primary key
     , REGION text
