@@ -1,1 +1,4 @@
 dags/logs/
+dags/__pycache__/
+logs/
+*.pyc

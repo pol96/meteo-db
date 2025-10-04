@@ -8,10 +8,12 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 with DAG(
     dag_id = 'ETL_METEO',
     tags=['etl'],
-    start_date=datetime(year=2024,
-                        month=11,
-                        day=24),
+    start_date=datetime(year=2025,
+                        month=10,
+                        day=4),
+    schedule_interval=None,
     ) as dag:
+    
 
     @task_group(group_id = 'Extract-Load')
     def EL():
