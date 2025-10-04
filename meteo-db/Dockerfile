@@ -1,4 +1,4 @@
-FROM postgres:latest
+FROM postgres:15
 
 # Install PostGIS dependencies
 RUN apt-get update \
