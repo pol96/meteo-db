@@ -1,0 +1,23 @@
+### Params: (schema_name, table_name, staging_dataset, database, istance_name, bucket_name, version, column_name, column_dtype)
+
+version: 2
+
+sources:
+  - name: {{ schema_name }}
+    dataset: {{ staging_dataset }}
+    tables:
+      - name: {{ table_name }}
+        description: >
+            This source is the landing point on GBQ for {{ schema_name }}.{{ table_name }} from {{ database }} - {{ istance_name }}
+        external:
+          location: gs://{{ bucket_name }}/{{ schema_name }}__{{ table_name }}/{{ version }}/*
+          options:
+            format: AVRO
+            ignore_unknown_values: true
+            max_bad_records: 0
+            hive_partition_uri_prefix: gs://{{ bucket_name }}/{{ schema_name }}__{{ table_name }}/{{ version }}
+        columns:
+          {% for name, dtype in zip(column_name, column_dtype) %}
+          - name: {{ name }}
+            data_type: {{ dtype }}
+          {% endfor %}
