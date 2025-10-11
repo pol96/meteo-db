@@ -1,0 +1,6 @@
+select 
+    column_name as col_name,
+    data_type as data_type
+from all_tab_columns
+where owner = '{{ table_schema }}'
+    and table_name = '{{ table_name }}'

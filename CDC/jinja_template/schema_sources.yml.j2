@@ -17,7 +17,9 @@ sources:
             max_bad_records: 0
             hive_partition_uri_prefix: gs://{{ bucket_name }}/{{ schema_name }}__{{ table_name }}/{{ version }}
         columns:
-          {% for name, dtype in zip(column_name, column_dtype) %}
+          {%- for col in cols -%}
+          {% for name, dtype in col.items() %}
           - name: {{ name }}
             data_type: {{ dtype }}
-          {% endfor %}
+          {%- endfor -%}
+          {%- endfor -%}

@@ -2,3 +2,5 @@ dags/logs/
 dags/__pycache__/
 logs/
 *.pyc
+table_cache/
+config/
