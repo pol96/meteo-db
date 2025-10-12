@@ -1,5 +1,5 @@
 dags/logs/
-dags/__pycache__/
+*__pycache__/
 logs/
 *.pyc
 table_cache/
