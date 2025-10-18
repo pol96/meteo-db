@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, Engine
 from urllib.parse import quote_plus
-from py_module.metadata.SourceBaseConnection import BaseConnection
+from py_module.metadata.connection.SourceBaseConnection import BaseConnection
 
 
 @BaseConnection.register("postgres")

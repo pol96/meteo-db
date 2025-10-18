@@ -1,4 +1,4 @@
-from py_module.metadata.JinjaBaseRender import BaseRender
+from py_module.metadata.render_jinja.JinjaBaseRender import BaseRender
 
 @BaseRender.register("cdc_extraction")
 class ChangeDataCaptureExtraction(BaseRender):
