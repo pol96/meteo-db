@@ -9,6 +9,7 @@ class ExecuteGCS(StorageConn):
                  table_schema: str,
                  table_name: str,
                  bucket_name: str,
+                 db_name: str,
                  max_file_size_mb: int = 400,
                  credential_path: str | None = None,
                  blob_name: str | None = None,
@@ -18,7 +19,7 @@ class ExecuteGCS(StorageConn):
         super().__init__(credential_path=credential_path)
         today = dt.today().strftime("%Y-%m-%d")
         now = dt.now().strftime("%d%m%Y%H%M%S")
-        base_hive_partition = f'{table_schema}/{table_name}/ingestion_date={today}/'
+        base_hive_partition = f'{db_name}/{table_schema}/{table_name}/ingestion_date={today}/'
         base_blob_name = f'chunk_{now}'
 
         if blob_name:
@@ -34,7 +35,8 @@ class ExecuteGCS(StorageConn):
         self.table_name = table_name
 
     def fix_decimal(self, value, scale):
-        quantize_map = {i: Decimal('0.' + '0' * (i-1) + '1') for i in range (1,21)}
+        quantize_map = {0: Decimal('1')}
+        quantize_map.update({i: Decimal('0.' + '0' * (i-1) + '1') for i in range (1,21)})
         if value is None:
             return None 
         return Decimal(value).quantize(quantize_map[scale], rounding=ROUND_DOWN)

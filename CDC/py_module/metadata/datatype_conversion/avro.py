@@ -49,6 +49,8 @@ class DataTypeConverter:
                                         "decimal": ["null", {"type": "bytes", "logicalType": "decimal", "precision": 18, "scale": 6}],
                                         "money": ["null", {"type": "bytes", "logicalType": "decimal", "precision": 18, "scale": 6}],
                                         "char": ["null", "string"],
+                                        "character": ["null","string"],
+                                        "character varying": ["null","string"],
                                         "varchar": ["null", "string"],
                                         "text": ["null", "string"],
                                         "uuid": ["null", "string"],
@@ -234,7 +236,7 @@ class DataTypeConverter:
         avro_type = self.source_to_avro_map.get(db_system, {}).get(db_type_norm)
 
         if not avro_type:
-            return "string"
+            return ["null","string"]
 
         # Handle numeric/decimal with precision/scale
         if isinstance(avro_type, list) and len(avro_type) == 2 and isinstance(avro_type[1], dict):
@@ -250,21 +252,59 @@ class DataTypeConverter:
         return avro_type
 
 
-    def avro_to_bigquery(self, avro_type: dict | str) -> str:
+    def avro_to_bigquery(self, avro_type) -> str:
+        # Handle union types (list), e.g. ["null", {...}]
+        if isinstance(avro_type, list):
+            non_null_types = [t for t in avro_type if t != "null"]
+            if len(non_null_types) == 1:
+                return self.avro_to_bigquery(non_null_types[0])
+            else:
+                # Complex union, fallback to STRING or implement custom logic
+                return "STRING"
+
+        # If simple string type
         if isinstance(avro_type, str):
             return self.avro_to_bq_map.get(avro_type, "STRING")
-        elif isinstance(avro_type, dict):
-            base_type = avro_type.get("type")
+
+        # If dict type
+        if isinstance(avro_type, dict):
             logical_type = avro_type.get("logicalType")
+            base_type = avro_type.get("type")
 
-            if logical_type and logical_type in self.avro_to_bq_map.get("logicalTypes", {}):
-                return self.avro_to_bq_map["logicalTypes"][logical_type]
-            if base_type in self.avro_to_bq_map:
-                return self.avro_to_bq_map[base_type]
-            if base_type in self.avro_to_bq_map.get("complexTypes", {}):
-                return self.avro_to_bq_map["complexTypes"][base_type]
+            # Handle logical types first
+            if logical_type:
+                logical_map = self.avro_to_bq_map.get("logicalTypes", {})
+                if logical_type in logical_map:
+                    return logical_map[logical_type]
 
+            # Handle complex types: array, map, record
+            complex_map = self.avro_to_bq_map.get("complexTypes", {})
+            if base_type == "array":
+                # Recursively resolve item type
+                item_type = avro_type.get("items")
+                bq_item_type = self.avro_to_bigquery(item_type)
+                return f"ARRAY<{bq_item_type}>"
+
+            if base_type == "map":
+                # Maps in BigQuery are usually STRUCT<key STRING, value ...>
+                # Here keys are always strings in Avro maps
+                value_type = avro_type.get("values")
+                bq_value_type = self.avro_to_bigquery(value_type)
+                # Return STRUCT type with key and value fields
+                return f"STRUCT<key STRING, value {bq_value_type}>"
+
+            if base_type == "record":
+                # Record maps to STRUCT; in real usage, you'd want to
+                # convert fields recursively — this is simplified
+                return "STRUCT"
+
+            # For simple base types (int, long, string, etc.)
+            if base_type:
+                return self.avro_to_bigquery(base_type)
+
+        # Fallback
         return "STRING"
+
 
     def source_to_bigquery(self, db_system: str, db_type: str) -> str:
         avro_type = self.source_to_avro(db_system, db_type)
