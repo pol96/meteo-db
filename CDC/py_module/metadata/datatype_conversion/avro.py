@@ -1,6 +1,7 @@
 from datetime import date, datetime, time
+from py_module.metadata.logging.logger import BaseLogger
 
-class DataTypeConverter:
+class DataTypeConverter(BaseLogger):
     def __init__(self, defaults: dict | None = None):
         """
         Initialize the DataTypeConverter with type mappings and default values.
@@ -10,7 +11,9 @@ class DataTypeConverter:
                                        Keys are type names or logical types, 
                                        values are the desired default.
         """
-        
+        super().__init__()
+        self.logger = self.get_logger()
+
         self.avro_to_bq_map = {
                                     "boolean": "BOOL",
                                     "int": "INT64",
@@ -236,6 +239,8 @@ class DataTypeConverter:
         avro_type = self.source_to_avro_map.get(db_system, {}).get(db_type_norm)
 
         if not avro_type:
+            self.logger.warning(f"No mapping for {db_system}.{db_type}, defaulting to ['null','string']")
+
             return ["null","string"]
 
         # Handle numeric/decimal with precision/scale
@@ -248,6 +253,7 @@ class DataTypeConverter:
                 if numeric_scale is not None:
                     type_dict["scale"] = numeric_scale
                 avro_type[1] = type_dict
+                self.logger.debug(f"Decimal type precision/scale set for {db_system}.{db_type}: {type_dict}")
 
         return avro_type
 
@@ -259,7 +265,7 @@ class DataTypeConverter:
             if len(non_null_types) == 1:
                 return self.avro_to_bigquery(non_null_types[0])
             else:
-                # Complex union, fallback to STRING or implement custom logic
+                self.logger.warning(f"Complex union type {avro_type} encountered, defaulting to STRING")
                 return "STRING"
 
         # If simple string type
@@ -294,8 +300,7 @@ class DataTypeConverter:
                 return f"STRUCT<key STRING, value {bq_value_type}>"
 
             if base_type == "record":
-                # Record maps to STRUCT; in real usage, you'd want to
-                # convert fields recursively — this is simplified
+                self.logger.warning(f"Unknown Avro type {avro_type}, defaulting to STRING")
                 return "STRUCT"
 
             # For simple base types (int, long, string, etc.)
@@ -308,8 +313,9 @@ class DataTypeConverter:
 
     def source_to_bigquery(self, db_system: str, db_type: str) -> str:
         avro_type = self.source_to_avro(db_system, db_type)
-        return self.avro_to_bigquery(avro_type)
-
+        bq_type = self.avro_to_bigquery(avro_type)
+        self.logger.debug(f"Converted {db_system}.{db_type} -> {bq_type}")
+        return bq_type
     # -------------------------------
     # Avro field generation with defaults
     # -------------------------------
@@ -318,6 +324,7 @@ class DataTypeConverter:
         default_value = self._default_for_type(avro_type)
         if default_value is not None:
             field["default"] = default_value
+        self.logger.debug(f"Generated Avro field {name}: {field}")
         return field
 
     def _default_for_type(self, avro_type: dict | str):
