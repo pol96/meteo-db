@@ -1,9 +1,18 @@
-select 
-    column_name as col_name,
-    data_type as data_type,
-    numeric_precision as precision,
-    numeric_scale as scale
-from information_schema.columns 
+select distinct
+    {% if table_name is none -%} c.table_schema, {%- endif %}
+    {% if table_name is none -%} c.table_name, {%- endif %}
+    c.column_name as col_name,
+    c.data_type as data_type,
+    c.numeric_precision as precision,
+    c.numeric_scale as scale
+from information_schema.columns c
+    inner join information_schema.tables t
+        on c.table_schema || c.table_name = t.table_schema || c.table_name 
 where true 
-    and table_name = '{{ table_name }}'
-    and table_schema = '{{ table_schema }}'
+    and lower(t.table_type) like '%table%'
+    {% if table_name is not none %}
+     and c.table_name = '{{ table_name }}'
+    {%- endif -%}
+    {% if table_schema is not none %}
+     and c.table_schema = '{{ table_schema }}'
+    {%- endif -%}

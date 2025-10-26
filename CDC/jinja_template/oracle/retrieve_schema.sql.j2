@@ -1,8 +1,15 @@
 select 
+    {%- if table_name is none -%} owner as table_schema, {%- endif -%}
+    {%- if table_name is none -%} table_name as table_name, {%- endif -%}
     column_name as col_name,
     data_type as data_type,
     data_precision as precision,
     data_scale as scale
 from all_tab_columns
-where owner = '{{ table_schema }}'
-    and table_name = '{{ table_name }}'
+where 1 = 1
+    {% if table_name is not none %}
+     and table_name = '{{ table_name }}'
+    {%- endif -%}
+    {% if table_schema is not none %}
+     and owner = '{{ table_schema }}'
+    {%- endif -%}
