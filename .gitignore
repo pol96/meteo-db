@@ -4,3 +4,4 @@ logs/
 *.pyc
 table_cache/
 config/
+source_db_schema/
