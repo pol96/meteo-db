@@ -239,7 +239,7 @@ class DataTypeConverter(BaseLogger):
         avro_type = self.source_to_avro_map.get(db_system, {}).get(db_type_norm)
 
         if not avro_type:
-            self.logger.warning(f"No mapping for {db_system}.{db_type}, defaulting to ['null','string']")
+            self.logger.warning(f"No mapping for db:{db_system} - data type: {db_type}, defaulting to ['null','string']")
 
             return ["null","string"]
 
